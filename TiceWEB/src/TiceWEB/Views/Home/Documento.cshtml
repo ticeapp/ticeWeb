@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Documento";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Documentos x Tarea</title>
+</head>
+<body>
+
+    <div>
+        <h2>Documentos</h2>
+        <ul id="products" />
+    </div>
+    <div>
+        <h2>Busqueda</h2>
+        <input type="text" id="periodo" size="20" />
+        <input type="text" id="estado" size="20" />
+        <input type="button" value="Search" onclick="TareasxActividad(); return false;" />
+        <p id="product" />
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var uri = 'http://localhost:49492/api/Actividad?periodo=2015-03&estado=A';
+
+        function TareasxActividad() {
+            jQuery.support.cors = true;
+            $.ajax({
+                url: 'http://localhost:49492/api/Documento?tarea=1',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    WriteResponse(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+
+
+      function WriteResponse(documentos) {
+          var strResult = "<table><th>Codigo</th><th>Nombre</th><th>Titulo</th><th>Estado</th><th>Fecha</th>";
+          $.each(documentos, function (index, documentos) {
+              strResult += "<tr><td>" + documentos.Codigo + "</td><td> " + documentos.Nombre + "</td><td>" + documentos.Titulo + "</td><td>" + documentos.Estado + "</td><td>" + documentos.Fecha + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#divResult").html(strResult);
+        }
+
+    function find() {
+        var periodo = $('#periodo').val();
+        var estado = $('#estado').val();
+
+
+        $.getJSON(uri + 'periodo=' + periodo + '&estado=' + estado)
+          .done(function (data) {
+              $.each(data, function (key, item) {
+                  // Add a list item for the product.
+                  $('<li>', { text: formatItem(item) }).appendTo($('#products'));
+              });
+          });
+    }
+
+    </script>
+
+
+    <div id="divResult"></div>
+
+</body>
+</html>
